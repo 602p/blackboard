@@ -1,0 +1,55 @@
+<html>
+<head>
+<title>BlackBoard</title>
+<style>
+.state{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+body{
+	background-color: black;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+function remove(id) {
+    return (elem=document.getElementById(id)).parentNode.removeChild(elem);
+}
+
+var states=["nevada", "rhodeisland", "southdakota", "illinois", "newmexico", "oregon", "kentucky", "maine", "delaware", "idaho", "pennsylvania", "arizona", "nebraska", "newjersey", "indiana", "washington", "alabama", "montana", "hawaii", "westvirginia", "northdakota", "northcarolina", "louisiana", "alaska", "colorado", "texas", "newhampshire", "utah", "michigan", "georgia", "florida", "tennessee", "wisconsin", "kansas", "virginia", "iowa", "connecticut", "newyork", "minnesota", "vermont", "ohio", "maryland", "arkansas", "southcarolina", "massachusetts", "missouri", "wyoming", "california", "mississippi", "oklahoma"];
+
+var clientID;
+
+function addState(statename){
+	var state = document.createElement("img");
+	state.id=statename;
+	state.className="state";
+	state.src="../out/"+statename+".png?"+Math.floor((Math.random() * 100000) + 1).toString();
+	document.body.appendChild(state);
+}
+
+function update(){
+	console.log("Updating...");
+	var updated=$.getJSON("http://localhost:5000/get_updated_states/"+clientID.toString());
+	for(i=0;i<updated.length;i++){
+		console.log("Updating "+update[i]);
+		remove(update[i]);
+		addState(update[i]);
+	}
+}
+
+function initilize(){
+	clientID=Math.floor((Math.random() * 100000) + 1);
+	for(i=0;i<states.length;i++){
+		console.log("Adding state: "+states[i]);
+		addState(states[i]);
+	}
+	window.setInterval(update, 5000);
+}
+</script>
+</head>
+<body onload="initilize()">
+</body>
+</html>
