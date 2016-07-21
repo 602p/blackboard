@@ -1,5 +1,5 @@
 from flask import Flask, request, Blueprint
-import json, subprocess
+import json, subprocess, sys
 app = Flask(__name__)
 
 blueprint = Blueprint('out', __name__, static_url_path='/out', static_folder='out')
@@ -24,5 +24,9 @@ def set_state_updated(state):
 	else:
 		return "Invalid URL"
 
-subprocess.Popen(["python3","constant_refresh.py", "-1"], stdout=open("log/constant_refresh.log", 'w'), stderr=open("log/constant_refresh_err.log", 'w'))
-app.run()
+if len(sys.argv)>1 and sys.argv[1]=="mt":
+	for i in range(4):
+		subprocess.Popen(["python3","constant_refresh.py", str(i)], stdout=open("log/constant_refresh_%d.log" % i, 'w'), stderr=open("log/constant_refresh_%d_err.log" % i, 'w'))
+else:
+	subprocess.Popen(["python3","constant_refresh.py", "-1"], stdout=open("log/constant_refresh.log", 'w'), stderr=open("log/constant_refresh_err.log", 'w'))
+app.run('0.0.0.0',port=80)
