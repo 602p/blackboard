@@ -4,3 +4,8 @@ out/*
 integrated.png
 integrated/*
 twitter_keys.json
+old/integrated/*
+old/integrated.png
+old/out/*
+old/statecache/*
+old/log/*
