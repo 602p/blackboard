@@ -9,3 +9,5 @@ old/integrated.png
 old/out/*
 old/statecache/*
 old/log/*
+__pycache__/*
+datasources/__pycache__/*
