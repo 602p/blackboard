@@ -11,12 +11,36 @@ import wordcloud
 import warnings
 sys.path.append("datasources")
 
+STATES=['nevada', 'rhodeisland', 'southdakota', 'illinois', 'newmexico',\
+	'oregon', 'kentucky', 'maine', 'delaware', 'idaho', 'pennsylvania', \
+	'arizona', 'nebraska', 'newjersey', 'indiana', 'washington', 'alabama',\
+	'montana', 'hawaii', 'westvirginia', 'northdakota', 'northcarolina',\
+	'louisiana', 'alaska', 'colorado', 'texas', 'newhampshire', 'utah',\
+	'michigan', 'georgia', 'florida', 'tennessee', 'wisconsin', 'kansas',\
+	'virginia', 'iowa', 'connecticut', 'newyork', 'minnesota', 'vermont',\
+	'ohio', 'maryland', 'arkansas', 'southcarolina', 'massachusetts',\
+	'missouri', 'wyoming', 'california', 'mississippi', 'oklahoma']
+
+statemask_cache={}
+
 MASKS_PATH="masks/%s.png"
 CACHE_PATH="statecache/%s.png"
 FINAL_PATH="out/%s.png"
 
 def load_datasource(name):
 	return importlib.import_module(name)
+
+def process_stopwords(argtext):
+	stopwords=argtext.split(",")
+	remove=[]
+	for item in stopwords:
+		if item.startswith("%"):
+			with open(item.replace("%",""),'rU') as fd:
+				stopwords.extend(fd.read().split("\n"))
+			remove.append(item)
+	for item in remove:
+		stopwords.remove(item)
+	return stopwords
 
 class LoggingThingy:
 	def open_log(self, name=None):
@@ -115,36 +139,40 @@ class CacheBuilder(LoggingThingy):
 		self.log("Distribution complete: %s -> %d"%(str(self.worker_queues), sum([len(wq) for wq in self.worker_queues])))
 		assert sum([len(wq) for wq in self.worker_queues])==len(self.states), "Distributing states failed"
 
-	def run(self):
+	def run(self, track=True):
 		self.log("Starting %d processes............" % self.workers)
 		time.sleep(0.5)
 		worker_pipes=[i for i in range(self.workers)]
 		for p_id in range(self.workers):
 			worker_pipes[p_id], child_pipe=multiprocessing.Pipe()
 			multiprocessing.Process(target=_build_state_worker, args=(p_id, self.no_convert, self.no_state_name, self.stoplist, self.worker_queues[p_id], self.datasources, child_pipe)).start()
-		worker_state=[0 for _ in range(self.workers)]
-		self.log("Communicate loop starting")
-		while sum(worker_state)!=len(self.states):
-			if not self.quiet:
-				os.system("clear")
-				print("Rendering %d states using %d processes"%(len(self.states), self.workers))
-			w=0
-			for conn in worker_pipes:
-				if conn.poll():
-					worker_state[w]=conn.recv()
+		if track:
+			worker_state=[0 for _ in range(self.workers)]
+			self.log("Communicate loop starting")
+			while sum(worker_state)!=len(self.states):
 				if not self.quiet:
-					print(("Worker %02d: %02d/%02d ["%(w, worker_state[w], self.worker_sizes[w]))+"#"*worker_state[w]+\
-						" "*(self.worker_sizes[w]-worker_state[w])+"] -> "\
-						+(self.worker_queues[w][worker_state[w]] if worker_state[w]<self.worker_sizes[w] else "Done!"))
-				w+=1
-			time.sleep(1)
-		self.log("Finished!")
+					os.system("clear")
+					print("Rendering %d states using %d processes"%(len(self.states), self.workers))
+				w=0
+				for conn in worker_pipes:
+					if conn.poll():
+						worker_state[w]=conn.recv()
+					if not self.quiet:
+						print(("Worker %02d: %02d/%02d ["%(w, worker_state[w], self.worker_sizes[w]))+"#"*worker_state[w]+\
+							" "*(self.worker_sizes[w]-worker_state[w])+"] -> "\
+							+(self.worker_queues[w][worker_state[w]] if worker_state[w]<self.worker_sizes[w] else "Done!"))
+					w+=1
+				time.sleep(1)
+			self.log("Finished!")
+		else:
+			return worker_pipes
 
 class MapBuilder(LoggingThingy):
-	def __init__(self, states, sdl_driver, refresh, quiet):
+	def __init__(self, states, sdl_driver, refresh, start_from, quiet):
 		self.states=states
 		self.quiet=quiet
 		self.refresh=refresh
+		self.start_from=start_from
 		self.open_log()
 		if sdl_driver!="default":
 			self.log("Setting SDL_VIDEODRIVER=%s"%sdl_driver)
@@ -162,6 +190,9 @@ class MapBuilder(LoggingThingy):
 		self.log("Size -> %s"%str(size))
 		self.log("Resizing display...")
 		self.surf=pygame.display.set_mode(size)
+		if self.start_from:
+			self.log("Setting start_from")
+			self.surf.blit(pygame.image.load(self.start_from), (0,0))
 
 	def run(self):
 		import pygame
@@ -175,6 +206,13 @@ class MapBuilder(LoggingThingy):
 			i+=1
 			img=pygame.image.load(CACHE_PATH%item).convert()
 			img.set_colorkey((0,0,0))
+			if item not in statemask_cache:
+				img_mask=pygame.image.load(MASKS_PATH%item).convert()
+				img_mask.set_colorkey((255,255,255))
+				statemask_cache[item]=img_mask
+			else:
+				img_mask=statemask_cache[item]
+			self.surf.blit(img_mask, (0,0))
 			self.surf.blit(img, (0,0))
 			if self.refresh:
 				pygame.display.flip()

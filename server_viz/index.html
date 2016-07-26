@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>BlackBoard</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+function update(){
+	console.log("Updating...");
+	
+	var state = document.createElement("img");
+	
+	state.src="integrated.png?"+Math.floor((Math.random() * 100000) + 1).toString();
+	document.body.appendChild(state);
+	$("#thing").remove()
+	state.id="thing";
+}
+
+function initilize(){
+	window.setInterval(update, 16000);
+}
+</script>
+</head>
+<body onload="initilize()">
+<img src="integrated.png" id="thing"></img>
+</body>
+</html>
