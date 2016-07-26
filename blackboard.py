@@ -206,13 +206,14 @@ class MapBuilder(LoggingThingy):
 			i+=1
 			img=pygame.image.load(CACHE_PATH%item).convert()
 			img.set_colorkey((0,0,0))
-			if item not in statemask_cache:
-				img_mask=pygame.image.load(MASKS_PATH%item).convert()
-				img_mask.set_colorkey((255,255,255))
-				statemask_cache[item]=img_mask
-			else:
-				img_mask=statemask_cache[item]
-			self.surf.blit(img_mask, (0,0))
+			if self.start_from:
+				if item not in statemask_cache:
+					img_mask=pygame.image.load(MASKS_PATH%item).convert()
+					img_mask.set_colorkey((255,255,255))
+					statemask_cache[item]=img_mask
+				else:
+					img_mask=statemask_cache[item]
+				self.surf.blit(img_mask, (0,0))
 			self.surf.blit(img, (0,0))
 			if self.refresh:
 				pygame.display.flip()
