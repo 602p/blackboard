@@ -19,4 +19,4 @@ You can use run.sh to generate a big-ol png map, or you can run liveserver.py to
 I might add some real docs at some point, the whole things pretty quick-and-dirty
 
 ##Example
-![example image](https://raw.githubusercontent.com/602p/blackboard/master/examples/integrated.png)
+![example image](examples/integrated.png)
