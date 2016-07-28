@@ -1,25 +1,109 @@
 <html>
 <head>
 <title>BlackBoard</title>
+<style>
+.mapc{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+body{
+	background-color: black;
+}
+</style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript">
+function popitup(url) {
+	newwindow=window.open(url,'name','height=200,width=200');
+	if (window.focus) {newwindow.focus()}
+	return false;
+}
+
 function update(){
 	console.log("Updating...");
 	
-	var state = document.createElement("img");
+	var newmap = document.getElementById("map").cloneNode(true);
+	console.log(newmap);
+	newmap.id="newmap";
+	newmap.onload=function(){
+		newmap.style.display="block";
+		$("#map").remove()
+		newmap.id="map";
+	}
 	
-	state.src="integrated.png?"+Math.floor((Math.random() * 100000) + 1).toString();
-	document.body.appendChild(state);
-	$("#thing").remove()
-	state.id="thing";
+	newmap.src="integrated.png?"+Math.floor((Math.random() * 100000) + 1).toString();
+	newmap.className="mapc";
+	newmap.style.display="none";
+	document.body.appendChild(newmap);
+	
+
+}
+
+function stateclicked(elem){
+	popitup("stateview.html?"+elem.id);
 }
 
 function initilize(){
-	window.setInterval(update, 16000);
+	window.setInterval(update, 1000);
 }
 </script>
 </head>
 <body onload="initilize()">
-<img src="integrated.png" id="thing"></img>
+<img src="integrated.png" border="0" width="2000" height="1379" orgWidth="2000" orgHeight="1379" usemap="#image-maps-2016-07-27-163750" alt="" class="mapc" id="map"/>
+<map name="image-maps-2016-07-27-163750" id="ImageMapsCom-image-maps-2016-07-27-163750">
+<area shape="rect" coords="1998,1377,2000,1379" alt="Image Map" style="outline:none;" title="Image Map" href="http://www.image-maps.com/index.php?aff=mapped_users_70575" />
+<area  alt="" title="" onclick="stateclicked(this)" shape="poly" coords="232,234,177,245,174,330,206,365,375,387,399,270" style="outline:none;" target="_self"  id="washington"   />
+<area id="oregon" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="174,331,201,344,199,368,321,375,372,386,381,403,333,538,116,486,109,457" style="outline:none;" target="_self"     />
+<area id="california" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="239,521,207,629,355,822,342,907,243,894,222,839,142,795,120,705,91,602,78,541,112,488" style="outline:none;" target="_self"     />
+<area id="alaska" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="320,1028,439,1247,296,1367,10,1357,42,1022" style="outline:none;" target="_self"     />
+<area id="hawaii" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="475,1013,799,1167,885,1351,741,1364,380,1055" style="outline:none;" target="_self"     />
+<area id="montana" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="423,278,760,315,750,470,541,453,530,471,479,465,440,420,452,378,423,340" style="outline:none;" target="_self"     />
+<area id="idaho" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="395,272,373,385,383,405,349,447,332,536,522,569,533,472,480,469,442,420,454,375,413,321,425,276" style="outline:none;" target="_self"     />
+<area id="nevada" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="243,519,430,554,381,781,360,773,354,817,206,632" style="outline:none;" target="_self"     />
+<area id="utah" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="427,556,521,569,513,605,579,618,560,769,390,746" style="outline:none;" target="_self"     />
+<area id="arizona" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="389,745,562,770,534,983,453,978,330,909,365,850,353,824,362,780,378,781" style="outline:none;" target="_self"     />
+<area id="newmexico" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="772,785,757,977,566,975,563,992,537,986,558,770" style="outline:none;" target="_self"     />
+<area id="colorado" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="580,615,809,628,802,781,561,772" style="outline:none;" target="_self"     />
+<area id="wyoming" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="537,453,752,471,742,626,515,608" style="outline:none;" target="_self"     />
+<area id="northdakota" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="761,315,953,315,977,435,759,432" style="outline:none;" target="_self"     />
+<area id="southdakota" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="755,437,977,437,969,453,981,460,980,561,920,553,747,552" style="outline:none;" target="_self"     />
+<area id="nebraska" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="744,549,937,557,985,568,1025,662,809,664,808,631,748,628" style="outline:none;" target="_self"     />
+<area id="kansas" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="809,667,803,786,1068,781,1038,668" style="outline:none;" target="_self"     />
+<area id="texas" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="767,801,760,974,626,971,695,1033,693,1056,746,1088,792,1056,896,1149,901,1176,991,1207,987,1126,1060,1089,1109,1051,1117,1009,1091,965,1087,915,874,880,876,802" style="outline:none;" target="_self"     />
+<area id="oklahoma" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="773,782,1060,780,1078,910,878,883,875,806,772,802" style="outline:none;" target="_self"     />
+<area id="florida" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1349,1003,1342,981,1438,965,1445,974,1554,967,1554,950,1580,951,1677,1092,1662,1153,1547,1075,1542,1026,1489,995,1444,1019" style="outline:none;" target="_self"     />
+<area id="louisiana" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1093,931,1197,921,1206,956,1194,997,1262,994,1269,1020,1286,1024,1295,1061,1217,1070,1190,1049,1113,1052" style="outline:none;" target="_self"     />
+<area id="arkansas" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1063,800,1220,790,1216,803,1236,804,1199,922,1097,929,1093,913,1077,910" style="outline:none;" target="_self"     />
+<area id="missouri" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1014,643,1148,633,1189,698,1196,692,1204,696,1199,718,1237,748,1249,766,1244,783,1238,785,1235,806,1214,804,1222,790,1065,798,1056,696" style="outline:none;" target="_self"     />
+<area id="iowa" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="983,530,1147,520,1156,555,1187,568,1188,595,1166,599,1157,640,1012,639,978,558" style="outline:none;" target="_self"     />
+<area id="minnesota" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="955,315,1004,312,1010,303,1165,339,1100,403,1099,424,1089,438,1096,474,1148,515,989,528,981,460,974,446,978,435" style="outline:none;" target="_self"     />
+<area id="wisconsin" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1106,420,1102,419,1088,431,1096,474,1142,505,1173,556,1261,541,1264,439,1133,386,1099,397" style="outline:none;" target="_self"     />
+<area id="illinois" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1170,558,1261,548,1289,696,1277,743,1243,760,1202,715,1209,694,1155,654" style="outline:none;" target="_self"     />
+<area id="michigan" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1156,394,1283,436,1292,573,1441,547,1423,355,1183,345" style="outline:none;" target="_self"     />
+<area id="indiana" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1274,572,1290,685,1277,721,1330,722,1385,668,1358,554" style="outline:none;" target="_self"     />
+<area id="kentucky" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1245,777,1253,753,1272,755,1270,744,1283,724,1326,721,1348,710,1382,664,1419,672,1444,663,1485,704,1437,751" style="outline:none;" target="_self"     />
+<area id="tennessee" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1239,783,1508,735,1434,810,1228,841" style="outline:none;" target="_self"     />
+<area id="mississippi" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1221,846,1295,837,1304,958,1315,1008,1282,1022,1258,1002,1261,990,1191,999,1210,949,1193,893" style="outline:none;" target="_self"     />
+<area id="alabama" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1298,833,1302,953,1313,1001,1330,997,1347,1014,1358,1003,1339,985,1437,967,1427,918,1385,822" style="outline:none;" target="_self"     />
+<area id="georgia" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1384,820,1434,922,1439,967,1448,976,1544,965,1553,955,1574,954,1581,898,1463,806" style="outline:none;" target="_self"     />
+<area id="southcarolina" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1467,811,1579,898,1623,850,1637,810,1590,785,1552,794,1542,785,1479,797" style="outline:none;" target="_self"     />
+<area id="northcarolina" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1451,809,1545,785,1560,791,1599,785,1642,809,1664,803,1710,693,1511,733,1431,807" style="outline:none;" target="_self"     />
+<area id="virginia" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1440,747,1705,686,1635,610,1589,602,1539,693,1485,705" style="outline:none;" target="_self"     />
+<area id="ohio" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1491,524,1508,585,1503,619,1463,675,1379,658,1357,561,1402,553,1444,556" style="outline:none;" target="_self"     />
+<area id="westvirginia" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1507,578,1462,676,1503,713,1543,695,1590,605,1520,608" style="outline:none;" target="_self"     />
+<area id="pensylvania" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1488,527,1514,609,1687,561,1694,545,1671,525,1676,498,1652,483,1514,516,1511,508" style="outline:none;" target="_self"     />
+<area id="newyork" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1515,517,1658,486,1717,512,1672,357,1615,370,1512,468" style="outline:none;" target="_self"     />
+<area id="maine" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1728,319,1789,411,1892,278,1771,174,1739,211" style="outline:none;" target="_self"     />
+<area id="vermont" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1667,353,1703,434,1732,428,1722,332" style="outline:none;" target="_self"     />
+<area id="newhampshire" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1720,336,1723,429,1780,408,1732,324" style="outline:none;" target="_self"     />
+<area id="massachusetts" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1710,463,1770,443,1792,459,1820,443,1774,406,1699,433" style="outline:none;" target="_self"     />
+<area id="connecticut" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1716,506,1712,460,1758,448,1779,482" style="outline:none;" target="_self"     />
+<area id="newjersey" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1713,586,1680,574,1695,541,1672,518,1679,501,1712,509,1727,535" style="outline:none;" target="_self"     />
+<area id="maryland" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1553,600,1665,571,1691,614,1707,610,1699,657,1626,604,1554,619" style="outline:none;" target="_self"     />
+<area id="rhodeisland" alt="" title="" onclick="stateclicked(this)" shape="poly" coords="1771,474,1760,448,1773,442,1799,465" style="outline:none;" target="_self"     />
+</map>
+
+<!-- <img src="integrated.png" class="state" id="thing"></img> -->
 </body>
 </html>

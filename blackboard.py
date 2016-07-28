@@ -9,6 +9,8 @@ import numpy
 import PIL
 import wordcloud
 import warnings
+import json
+import operator
 sys.path.append("datasources")
 
 STATES=['nevada', 'rhodeisland', 'southdakota', 'illinois', 'newmexico',\
@@ -23,9 +25,10 @@ STATES=['nevada', 'rhodeisland', 'southdakota', 'illinois', 'newmexico',\
 
 statemask_cache={}
 
-MASKS_PATH="masks/%s.png"
 CACHE_PATH="statecache/%s.png"
+MASKS_PATH="masks/%s.png"
 FINAL_PATH="out/%s.png"
+DATA_PATH="statecache/%s.json"
 
 def load_datasource(name):
 	return importlib.import_module(name)
@@ -54,12 +57,19 @@ class LoggingThingy:
 		if not self.quiet:
 			print(ftext)
 
-def _build_state_worker(worker_id, no_convert, no_state_name, stoplist, states, datasources, connection):
+def _save_metadata(state, data, datasources):
+	with open(DATA_PATH%state, 'w') as fd:
+		jdata=[]
+		for k,v in reversed(sorted(data, key=operator.itemgetter(1))):
+			jdata.append([k,v])
+		json.dump({"words":jdata, "datasources":[item.get_embed_data() for item in datasources]}, fd)
+
+def _build_state_worker(worker_id, no_convert, state_data, no_state_name, stoplist, states, datasources, connection):
 	with open("log/worker_%d.log" % worker_id, 'w') as fd:
 		def log(txt):
 			fd.write(txt+"\n")
 		log("Worker %d started, pid=%d" % (worker_id, os.getpid()))
-		log("worker_id=%d, no_convert=%s, no_state_name=%s, stoplist=%s, states=%s, datasources=%s, connection=%s" % (worker_id, str(no_convert), str(no_state_name), str(stoplist), str(states), str(datasources), str(connection)))
+		log("worker_id=%d, state_data=%s, no_convert=%s, no_state_name=%s, stoplist=%s, states=%s, datasources=%s, connection=%s" % (worker_id, state_data, str(no_convert), str(no_state_name), str(stoplist), str(states), str(datasources), str(connection)))
 		log("Instansiating Datasources")
 		datasources_i=[ds.blackboard_datasource() for ds in datasources]
 		[ds.setup() for ds in datasources_i]
@@ -87,7 +97,10 @@ def _build_state_worker(worker_id, no_convert, no_state_name, stoplist, states, 
 			log("Creating WordCloud...")
 			wc = wordcloud.WordCloud(background_color=None, mode="RGBA", max_words=2000, mask=mask, stopwords=stopwords)
 			log("Generating WordCloud...")
-			wc.generate(text)
+			frequencies=wc.process_text(text)
+			if state_data:
+				_save_metadata(item, frequencies, datasources_i)
+			wc.generate_from_frequencies(frequencies)
 			#log("Coloring WordCloud...")
 			#wc.recolor(color_func=grey_color_func, random_state=3)
 			log("Saving...")
@@ -99,11 +112,12 @@ def _build_state_worker(worker_id, no_convert, no_state_name, stoplist, states, 
 			connection.send(s)
 
 class CacheBuilder(LoggingThingy):
-	def __init__(self, states, workers, datasources, no_convert, no_state_name, stoplist, quiet=False):
+	def __init__(self, states, workers, datasources, state_data, no_convert, no_state_name, stoplist, quiet=False):
 		self.open_log()
 		self.datasources=[load_datasource(ds) for ds in datasources]
 		self.states=states
 		self.stoplist=stoplist
+		self.state_data=state_data
 		self.workers=workers
 		self.quiet=quiet
 		self.no_state_name=no_state_name
@@ -145,7 +159,7 @@ class CacheBuilder(LoggingThingy):
 		worker_pipes=[i for i in range(self.workers)]
 		for p_id in range(self.workers):
 			worker_pipes[p_id], child_pipe=multiprocessing.Pipe()
-			multiprocessing.Process(target=_build_state_worker, args=(p_id, self.no_convert, self.no_state_name, self.stoplist, self.worker_queues[p_id], self.datasources, child_pipe)).start()
+			multiprocessing.Process(target=_build_state_worker, args=(p_id, self.no_convert, self.state_data, self.no_state_name, self.stoplist, self.worker_queues[p_id], self.datasources, child_pipe)).start()
 		if track:
 			worker_state=[0 for _ in range(self.workers)]
 			self.log("Communicate loop starting")
@@ -162,6 +176,8 @@ class CacheBuilder(LoggingThingy):
 							" "*(self.worker_sizes[w]-worker_state[w])+"] -> "\
 							+(self.worker_queues[w][worker_state[w]] if worker_state[w]<self.worker_sizes[w] else "Done!"))
 					w+=1
+				if not self.quiet:
+					print("Overall  : %02d/%02d ["%(sum(worker_state), len(self.states))+"#"*sum(worker_state)+" "*(len(self.states)-sum(worker_state))+"]")
 				time.sleep(1)
 			self.log("Finished!")
 		else:

@@ -11,4 +11,11 @@ class TwitterDatasource:
 		search=self.api.GetSearch(state)
 		return " ".join([x.text for x in search])
 
+	def get_embed_data(self):
+		return {
+			"name":"twitter",
+			"desc":"Twitter trending for searching for each state's name",
+			"linkout":"https://twitter.com/search?q=<STATE>%20<QUERY>"
+		}
+
 blackboard_datasource=TwitterDatasource

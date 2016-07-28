@@ -15,6 +15,7 @@ buildcache_parser.add_argument('-q', action='store_true')
 buildcache_parser.add_argument('datasource', nargs="+")
 buildcache_parser.add_argument('--no-convert', action='store_true')
 buildcache_parser.add_argument('--no-state-name', action='store_true')
+buildcache_parser.add_argument('--state-data', action='store_true')
 
 buildmap_parser = subparsers.add_parser('buildmap')
 buildmap_parser.add_argument('--states', default='ALL')
@@ -29,6 +30,7 @@ buildmap_parser.add_argument('--convert', action='store_true')
 buildmap_parser.add_argument('--use-cache', action='store_true')
 buildmap_parser.add_argument('datasource', nargs="*")
 buildmap_parser.add_argument('--no-state-name', action='store_true')
+buildmap_parser.add_argument('--state-data', action='store_true')
 
 if __name__ == '__main__':
 	args = parser.parse_args()
@@ -44,9 +46,9 @@ if __name__ == '__main__':
 			except ValueError:pass
 		stopwords=blackboard.process_stopwords(args.stopwords)
 	if args.command=="buildcache":
-		blackboard.CacheBuilder(states, args.workers, args.datasource, args.no_convert, args.no_state_name, stopwords, args.q).run()
+		blackboard.CacheBuilder(states, args.workers, args.datasource, args.state_data, args.no_convert, args.no_state_name, stopwords, args.q).run()
 	if args.command=="buildmap":
 		if not args.use_cache:
 			assert args.datasource, "No datasource provided, but --use-cache was not specified"
-			blackboard.CacheBuilder(states, args.workers, args.datasource, not args.convert, args.no_state_name, stopwords, args.q).run()
+			blackboard.CacheBuilder(states, args.workers, args.datasource, args.state_data, not args.convert, args.no_state_name, stopwords, args.q).run()
 		blackboard.MapBuilder(states, args.sdl_driver, args.refresh_display, args.start_from, args.q).run()

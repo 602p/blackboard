@@ -19,6 +19,8 @@ args = parser.parse_args()
 if __name__=="__main__":
 	app = flask.Flask(__name__)
 	app.register_blueprint(flask.Blueprint('server_viz', __name__, static_url_path='/sv', static_folder='server_viz'))
+	app.register_blueprint(flask.Blueprint('out', __name__, static_url_path='/out', static_folder='out'))
+	app.register_blueprint(flask.Blueprint('statecache', __name__, static_url_path='/sc', static_folder='statecache'))
 	addr=args.address
 	if ":" not in addr:
 		addr+=":5000"
@@ -35,6 +37,6 @@ if __name__=="__main__":
 			if len(statebuffer)==0:
 				statebuffer.extend(blackboard.STATES)
 			i+=1
-		blackboard.CacheBuilder(iterstates, int(args.workers), args.datasource, True, args.no_state_name, stopwords, args.q).run()
+		blackboard.CacheBuilder(iterstates, int(args.workers), args.datasource, True, False, args.no_state_name, stopwords, args.q).run()
 		blackboard.MapBuilder(iterstates, 'dummy', False, "integrated.png", args.q).run()
 		shutil.copy("integrated.png", "server_viz/integrated.png")

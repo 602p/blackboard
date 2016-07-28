@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>BlackBoard</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+function initilize(){
+	var query = window.location.search.substring(1);
+    document.getElementById("state").innerHTML=query;
+	$.getJSON("/sc/"+query+".json", "", function(data, status, xhr){
+		var i=1;
+		var text="";
+		while (i<11){
+			text+="#"+i.toString()+": "+data.words[i-1][0]+" ("+data.words[i-1][1].toString()+" mentions) <a href=\""+data.datasources[0].linkout.replace("<STATE>",query).replace("<QUERY>",data.words[i-1][0])+"\">[link]</a><br/>"
+			i+=1;
+		}
+		document.getElementById("topten").innerHTML=text;
+		document.getElementById("datasources").innerHTML="Data from `"+data.datasources[0].name+"`: "+data.datasources[0].desc;
+	})
+}
+</script>
+</head>
+<body onload="initilize()">
+	<h1 id="state">Loading...</h1>
+	<p id="topten"></p>
+	<p id="datasources"></p>
+</body>
+</html>
