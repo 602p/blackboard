@@ -6,7 +6,7 @@
 function initilize(){
 	var query = window.location.search.substring(1);
     document.getElementById("state").innerHTML=query;
-	$.getJSON("/sc/"+query+".json", "", function(data, status, xhr){
+	$.getJSON("../sc/"+query+".json", "", function(data, status, xhr){
 		var i=1;
 		var text="";
 		while (i<11){
