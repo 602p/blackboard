@@ -1,27 +1,28 @@
 <html>
 <head>
-<title>BlackBoard</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript">
-function initilize(){
-	var query = window.location.search.substring(1);
-    document.getElementById("state").innerHTML=query;
-	$.getJSON("../sc/"+query+".json", "", function(data, status, xhr){
-		var i=1;
-		var text="";
-		while (i<11){
-			text+="#"+i.toString()+": "+data.words[i-1][0]+" ("+data.words[i-1][1].toString()+" mentions) <a href=\""+data.datasources[0].linkout.replace("<STATE>",query).replace("<QUERY>",data.words[i-1][0])+"\">[link]</a><br/>"
-			i+=1;
+	<title>BlackBoard</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script type="text/javascript">
+		function initilize(){
+			var query = window.location.search.substring(1);
+		    document.getElementById("state").innerHTML=query;
+			$.getJSON("../sc/"+query+".json", "", function(data, status, xhr){
+				var i=1;
+				var text="";
+				while (i<11){
+					text+="<tr><td class=&#34;commonalitynumber&#34; width=&#34;5&#37;&#34;>#"+i.toString()+":</td><td width=&#34;20&#37;&#34;>"+data.words[i-1][0]+"</td><td width=&#34;30&#37;&#34;>("+data.words[i-1][1].toString()+" mentions)</td><td width=&#34;10&#37;&#34;><a href=\""+data.datasources[0].linkout.replace("<STATE>",query).replace("<QUERY>",data.words[i-1][0])+"\"><button>link</button></a></td></tr>"
+					i+=1;
+				}
+				document.getElementById("topten").innerHTML=text;
+				document.getElementById("datasources").innerHTML="Data from `"+data.datasources[0].name+"`: "+data.datasources[0].desc;
+			})
 		}
-		document.getElementById("topten").innerHTML=text;
-		document.getElementById("datasources").innerHTML="Data from `"+data.datasources[0].name+"`: "+data.datasources[0].desc;
-	})
-}
-</script>
+	</script>
+	<link rel="stylesheet" href="stateview.css" charset="utf-8">
 </head>
 <body onload="initilize()">
 	<h1 id="state">Loading...</h1>
-	<p id="topten"></p>
+	<table id="topten"></table>
 	<p id="datasources"></p>
 </body>
 </html>
