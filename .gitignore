@@ -11,3 +11,5 @@ old/statecache/*
 old/log/*
 __pycache__/*
 datasources/__pycache__/*
+application.zip
+server_keys.json
