@@ -23,5 +23,5 @@ You can also push live integrated map and metadata updates to a configured FTP s
 I might add some real docs at some point, the whole things pretty quick-and-dirty
 
 ##Example
-A running live web example is availible at [blackboard.zapflame.com](http://blackboard.zapflame.com)
+A running live web example is availible at [fiftystat.es](http://fiftystat.es) (how bout that domain, huh?)
 ![example image](examples/integrated.png)
